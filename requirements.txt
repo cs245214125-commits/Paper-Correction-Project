@@ -9,3 +9,6 @@ scikit-learn
 numpy
 sqlalchemy
 psycopg2
+fitz
+frontend
+tools

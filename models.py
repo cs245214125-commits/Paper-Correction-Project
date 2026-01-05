@@ -7,7 +7,8 @@ class QuestionPaper(Base):
 
     id = Column(Integer, primary_key=True)
     paper_name = Column(String, nullable=False)
-
+    file_path = Column(String, nullable=False)
+    
 class Question(Base):
     __tablename__ = "questions"
 
