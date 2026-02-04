@@ -7,7 +7,7 @@ from google import genai
 # ── Gemini Configuration ────────────────────────────────
 # Get your API key from https://aistudio.google.com/
 GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
-client = genai.Client(api_key="AIzaSyByLhxsjU6oDmL17M5NbqxU5B1_0pOu6ow")
+client = genai.Client(api_key="")
 
 def extract_with_gemini(image_list):
     """
