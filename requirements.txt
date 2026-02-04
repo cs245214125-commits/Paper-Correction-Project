@@ -12,3 +12,9 @@ psycopg2
 fitz
 frontend
 tools
+pdfplumber
+pytesseract 
+pdf2image 
+pymupdf
+pillow
+google-genai

@@ -6,6 +6,7 @@ from models import QuestionPaper, Question, Student, Result, QuestionResult
 from ocr_utils import extract_text
 from nlp_utils import embed
 from scoring import similarity_score, calculate_marks
+import re
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Question & Answer PDF/Image Evaluation")
@@ -40,7 +41,7 @@ async def upload_question_paper(
 
         # 2️⃣ Extract text (OCR / DOC / PDF)
         extracted_text = extract_text(file_path)
-        print(extracted_text)
+        print(extracted_text,"Extracted")
         if not extracted_text:
             raise HTTPException(400, "Text extraction failed")
 
@@ -54,7 +55,7 @@ async def upload_question_paper(
         qa_pairs = extract_qa_pairs(extracted_text)
 
         print("QA PAIRS FOUND:", len(qa_pairs))
-        print(qa_pairs)
+        print(qa_pairs, "QA PAIRS")
 
         if not qa_pairs:
             print("⚠️ QA pattern failed, falling back to question-only extraction")
@@ -97,7 +98,7 @@ async def upload_question_paper(
         print(e)
         raise HTTPException(500, str(e))
 
-import re
+
 
 def extract_qa_pairs(text: str):
 
@@ -106,13 +107,13 @@ def extract_qa_pairs(text: str):
     text = re.sub(r"\n{2,}", "\n", text)
 
     pattern = re.compile(
-        r"(?:Q\s*)?(\d{1,2})\s*[\.\)]\s*"      # Q number
-        r"([\s\S]*?)"                          # Question text (SAFE)
-        r"\s*(?:Ans|Answer|ANS|A)\s*[:\-]\s*"  # Answer keyword
-        r"([\s\S]*?)"                          # Answer text
-        r"(?=\n\s*(?:Q\s*)?\d{1,2}\s*[\.\)]|\Z)",
-        re.IGNORECASE
-    )
+    r"(?:Q\s*)?(\d{1,2})\s*[\.\)]\s*"               # Question number
+    r"([\s\S]*?)"                                   # Question text
+    r"\s*(?:Ans|Answer|ANS|A)\s*(?:[:\-\.]|\n)\s*"  # Ans / Ans. / Ans: / newline
+    r"([\s\S]*?)"                                   # Answer text (multi-line)
+    r"(?=\n\s*(?:Q\s*)?\d{1,2}\s*[\.\)]|\Z)",       # Stop at next Q or EOF
+    re.IGNORECASE
+)
 
     results = []
 
